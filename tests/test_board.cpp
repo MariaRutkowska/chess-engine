@@ -3,6 +3,7 @@
 
 #include "bitboard.h"
 #include "board.h"
+#include "attacks.h"
 
 #include <iostream>
 #include <string>
@@ -72,12 +73,47 @@ static void test_invalid_fen() {
     CHECK(!b.set_fen("rnbqkbnr/pppppppp/9/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"));
 }
 
+static void test_knight_attacks() {
+    init_attacks();
+    CHECK(popcount(KNIGHT_ATTACKS[A1]) == 2);
+    CHECK(popcount(KNIGHT_ATTACKS[H1]) == 2);
+    CHECK(popcount(KNIGHT_ATTACKS[E4]) == 8);
+    CHECK(popcount(KNIGHT_ATTACKS[H8]) == 2);
+    CHECK(popcount(KNIGHT_ATTACKS[B1]) == 3);
+    CHECK(KNIGHT_ATTACKS[A1] == (square_bb(B3) | square_bb(C2)));
+    CHECK(KNIGHT_ATTACKS[G1] == (square_bb(E2) | square_bb(F3) | square_bb(H3)));
+}
+
+static void test_king_attacks() {
+    init_attacks();
+    CHECK(popcount(KING_ATTACKS[A1]) == 3);
+    CHECK(popcount(KING_ATTACKS[E1]) == 5);
+    CHECK(popcount(KING_ATTACKS[E4]) == 8);
+    CHECK(popcount(KING_ATTACKS[H8]) == 3);
+    CHECK(popcount(KING_ATTACKS[H4]) == 5);
+    CHECK(KING_ATTACKS[A1] == (square_bb(A2) | square_bb(B1) | square_bb(B2)));
+}
+
+static void test_pawn_attacks() {
+    init_attacks();
+    CHECK(PAWN_ATTACKS[WHITE][E4] == (square_bb(D5) | square_bb(F5)));
+    CHECK(PAWN_ATTACKS[WHITE][A2] == square_bb(B3));
+    CHECK(PAWN_ATTACKS[WHITE][H2] == square_bb(G3));
+    CHECK(PAWN_ATTACKS[BLACK][E5] == (square_bb(D4) | square_bb(F4)));
+    CHECK(PAWN_ATTACKS[BLACK][A7] == square_bb(B6));
+    CHECK(PAWN_ATTACKS[BLACK][H7] == square_bb(G6));
+}
+
+
 int main() {
     test_bitboard_helpers();
     test_squares();
     test_start_position();
     test_fen_round_trip();
     test_invalid_fen();
+    test_pawn_attacks();
+    test_king_attacks();
+    test_knight_attacks();
 
     if (failures) {
         std::cerr << failures << " check(s) failed\n";
