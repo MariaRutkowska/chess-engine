@@ -1,0 +1,88 @@
+// Minimal test runner with no external dependencies.
+// Run with: ctest --test-dir build --output-on-failure
+
+#include "bitboard.h"
+#include "board.h"
+
+#include <iostream>
+#include <string>
+#include <vector>
+
+static int failures = 0;
+
+#define CHECK(expr)                                                        \
+    do {                                                                   \
+        if (!(expr)) {                                                     \
+            std::cerr << __FILE__ << ':' << __LINE__ << "  FAILED: " #expr \
+                      << '\n';                                             \
+            ++failures;                                                    \
+        }                                                                  \
+    } while (0)
+
+static void test_bitboard_helpers() {
+    Bitboard b = 0;
+    set_bit(b, E4);
+    set_bit(b, A1);
+    CHECK(popcount(b) == 2);
+    CHECK(lsb(b) == A1);
+    CHECK(pop_lsb(b) == A1);
+    CHECK(b == square_bb(E4));
+    clear_bit(b, E4);
+    CHECK(b == 0);
+}
+
+static void test_squares() {
+    CHECK(square_to_string(A1) == "a1");
+    CHECK(square_to_string(H8) == "h8");
+    CHECK(string_to_square("e4") == E4);
+    CHECK(string_to_square("z9") == NO_SQUARE);
+}
+
+static void test_start_position() {
+    Board b;
+    CHECK(b.side_to_move() == WHITE);
+    CHECK(popcount(b.occupancy()) == 32);
+    CHECK(popcount(b.pieces(W_PAWN)) == 8);
+    CHECK(b.piece_on(E1) == W_KING);
+    CHECK(b.piece_on(D8) == B_QUEEN);
+    CHECK(b.castling_rights() == (WHITE_OO | WHITE_OOO | BLACK_OO | BLACK_OOO));
+    CHECK(b.en_passant_square() == NO_SQUARE);
+}
+
+static void test_fen_round_trip() {
+    const std::vector<std::string> fens = {
+        START_FEN,
+        // "Kiwipete" - standard perft test position
+        "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1",
+        "rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2",
+        "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1",
+    };
+    for (const auto& fen : fens) {
+        Board b;
+        CHECK(b.set_fen(fen));
+        CHECK(b.get_fen() == fen);
+    }
+}
+
+static void test_invalid_fen() {
+    Board b;
+    CHECK(!b.set_fen(""));
+    CHECK(!b.set_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP w KQkq - 0 1"));  // 7 ranks
+    CHECK(!b.set_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR x KQkq - 0 1"));
+    CHECK(!b.set_fen("rnbqkbnr/pppppppp/9/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"));
+}
+
+int main() {
+    test_bitboard_helpers();
+    test_squares();
+    test_start_position();
+    test_fen_round_trip();
+    test_invalid_fen();
+
+    if (failures) {
+        std::cerr << failures << " check(s) failed\n";
+        return 1;
+    }
+    std::cout << "All tests passed\n";
+    return 0;
+}
