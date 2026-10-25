@@ -14,7 +14,6 @@ static Bitboard knight_attacks(int sq) {
     a |= (b << 17) & ~FILE_A;
     a |= (b << 15) & ~FILE_H;
     a |= (b << 10) & ~(FILE_A | FILE_B);
-    // TODO: dopisz pozostałe 5 linijek według tabeli
     a |= (b << 6) & ~(FILE_G | FILE_H);
     a |= (b >> 17) & ~ FILE_H;
     a |= (b >> 15) & ~ FILE_A;

@@ -4,6 +4,7 @@
 #include "bitboard.h"
 #include "board.h"
 #include "attacks.h"
+#include "move.h"
 
 #include <iostream>
 #include <string>
@@ -143,6 +144,27 @@ static void test_queen_attacks() {
     CHECK(popcount(queen_attacks(A1, 0)) == 21);
 }
 
+static void test_moves() {
+    Move m = make_move(E2, E4);
+    CHECK(move_from(m) == E2);
+    CHECK(move_to(m) == E4);
+    CHECK(move_type(m) == NORMAL);
+    CHECK(move_to_string(m) == "e2e4");
+
+    Move p = make_move(E7, E8, PROMOTION, QUEEN);
+    CHECK(move_from(p) == E7);
+    CHECK(move_to(p) == E8);
+    CHECK(move_type(p) == PROMOTION);
+    CHECK(move_promo(p) == QUEEN);
+    CHECK(move_to_string(p) == "e7e8q");
+
+    Move c = make_move(E1, G1, CASTLING);
+    CHECK(move_type(c) == CASTLING);
+    CHECK(move_to(c) == G1);
+    CHECK(move_to_string(c) == "e1g1");
+}
+
+
 int main() {
     test_bitboard_helpers();
     test_squares();
@@ -155,6 +177,7 @@ int main() {
     test_rook_attacks();
     test_bishop_attacks();
     test_queen_attacks();
+    test_moves();
 
     if (failures) {
         std::cerr << failures << " check(s) failed\n";
