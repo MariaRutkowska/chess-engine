@@ -95,18 +95,20 @@ static void generate_queen_moves(const Board &board, MoveList &list)
     }
 }
 
-static void add_pawn_move(MoveList& list, int from, int to, int promo_rank) {
-    if (rank_of(to) == promo_rank) {
+static void add_pawn_move(MoveList &list, int from, int to, int promo_rank)
+{
+    if (rank_of(to) == promo_rank)
+    {
         list.add(make_move(from, to, PROMOTION, QUEEN));
         list.add(make_move(from, to, PROMOTION, ROOK));
         list.add(make_move(from, to, PROMOTION, BISHOP));
         list.add(make_move(from, to, PROMOTION, KNIGHT));
-    } else {
+    }
+    else
+    {
         list.add(make_move(from, to));
     }
 }
-
-
 
 static void generate_pawn_moves(const Board &board, MoveList &list)
 {
@@ -119,6 +121,7 @@ static void generate_pawn_moves(const Board &board, MoveList &list)
     int up = (us == WHITE) ? 8 : -8;
     int start_rank = (us == WHITE) ? 1 : 6;
     int promo_rank = (us == WHITE) ? 7 : 0;
+    int ep = board.en_passant_square();
 
     while (pawns)
     {
@@ -141,6 +144,11 @@ static void generate_pawn_moves(const Board &board, MoveList &list)
         {
             int cap = pop_lsb(targets);
             add_pawn_move(list, from, cap, promo_rank);
+        }
+
+        if (ep != NO_SQUARE && (PAWN_ATTACKS[us][from] & square_bb(ep)))
+        {
+            list.add(make_move(from, ep, EN_PASSANT));
         }
     }
 }

@@ -249,6 +249,32 @@ static void test_movegen_promotions() {
     CHECK(move_to_string(list.moves[0]) == "e7e8q");
 }
 
+static void test_movegen_en_passant() {
+    init_attacks();
+    // biały e5, czarny d5, pole ep d6: e6 + exd6 w przelocie
+    CHECK(count_moves("8/8/8/3pP3/8/8/8/8 w - d6 0 1") == 2);
+    // ta sama pozycja bez prawa en passant: tylko e6
+    CHECK(count_moves("8/8/8/3pP3/8/8/8/8 w - - 0 1") == 1);
+    // czarny e4, biały d4, pole ep d3: e3 + exd3
+    CHECK(count_moves("8/8/8/8/3Pp3/8/8/8 b - d3 0 1") == 2);
+    // pion za daleko od pola ep: tylko zwykły ruch
+    CHECK(count_moves("8/8/8/3p4/8/4P3/8/8 w - d6 0 1") == 1);
+
+    // ruch en passant ma właściwy rodzaj i zapis
+    Board b;
+    b.set_fen("8/8/8/3pP3/8/8/8/8 w - d6 0 1");
+    MoveList list;
+    generate_moves(b, list);
+    bool found = false;
+    for (int i = 0; i < list.count; ++i) {
+        if (move_type(list.moves[i]) == EN_PASSANT) {
+            found = true;
+            CHECK(move_to_string(list.moves[i]) == "e5d6");
+        }
+    }
+    CHECK(found);
+}
+
 
 int main() {
     test_bitboard_helpers();
@@ -267,6 +293,7 @@ int main() {
     test_movegen_sliders();
     test_movegen_pawns();
     test_movegen_promotions();
+    test_movegen_en_passant();
 
     if (failures) {
         std::cerr << failures << " check(s) failed\n";
