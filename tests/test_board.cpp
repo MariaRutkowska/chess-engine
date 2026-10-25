@@ -1,6 +1,4 @@
-// Minimal test runner with no external dependencies.
-// Run with: ctest --test-dir build --output-on-failure
-
+// tests written by Claude AI
 #include "bitboard.h"
 #include "board.h"
 #include "attacks.h"
