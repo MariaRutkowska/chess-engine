@@ -17,6 +17,7 @@ add_library(engine_core
   src/board.cpp
   src/uci.cpp
   src/attacks.cpp
+  src/movegen.cpp
 )
 target_include_directories(engine_core PUBLIC src)
 

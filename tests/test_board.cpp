@@ -5,6 +5,7 @@
 #include "board.h"
 #include "attacks.h"
 #include "move.h"
+#include "movegen.h"
 
 #include <iostream>
 #include <string>
@@ -165,6 +166,34 @@ static void test_moves() {
 }
 
 
+static int count_moves(const std::string& fen) {
+    Board b;
+    b.set_fen(fen);
+    MoveList list;
+    generate_moves(b, list);
+    return list.count;
+}
+
+static void test_movegen_knight_king() {
+    init_attacks();
+    // sam skoczek na e4
+    CHECK(count_moves("8/8/8/8/4N3/8/8/8 w - - 0 1") == 8);
+    // własny pion na f6 blokuje jedno pole
+    CHECK(count_moves("8/8/5P2/8/4N3/8/8/8 w - - 0 1") == 7);
+    // czarny pion na f6 można zbić
+    CHECK(count_moves("8/8/5p2/8/4N3/8/8/8 w - - 0 1") == 8);
+    // sam król na e4
+    CHECK(count_moves("8/8/8/8/4K3/8/8/8 w - - 0 1") == 8);
+    // król w rogu
+    CHECK(count_moves("8/8/8/8/8/8/8/K7 w - - 0 1") == 3);
+    // pozycja startowa: na razie tylko 4 ruchy skoczków (piony później)
+    CHECK(count_moves(START_FEN) == 4);
+    // to samo dla czarnych
+    CHECK(count_moves("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1") == 4);
+}
+
+
+
 int main() {
     test_bitboard_helpers();
     test_squares();
@@ -178,6 +207,7 @@ int main() {
     test_bishop_attacks();
     test_queen_attacks();
     test_moves();
+    test_movegen_knight_king();
 
     if (failures) {
         std::cerr << failures << " check(s) failed\n";
