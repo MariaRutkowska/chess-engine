@@ -6,3 +6,5 @@ extern std::array<Bitboard, 64> KNIGHT_ATTACKS;
 extern std::array<Bitboard, 64> KING_ATTACKS;
 extern std::array<std::array<Bitboard, 64>, 2> PAWN_ATTACKS;
 void init_attacks();
+
+Bitboard rook_attacks(int sq, Bitboard occupied);

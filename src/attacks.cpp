@@ -58,3 +58,36 @@ void init_attacks() {
         PAWN_ATTACKS[BLACK][sq] = pawn_attacks(BLACK, sq);
     }
 }
+
+Bitboard rook_attacks(int sq, Bitboard occupied) {
+    Bitboard a = 0;
+    int r = rank_of(sq);
+    int f = file_of(sq);
+
+    // petla w górę
+    for (int rr = r + 1; rr <= 7; ++rr) {
+        int s = make_square(f, rr);
+        set_bit(a, s);
+        if (test_bit(occupied, s)) break;
+    }
+    // petla w dol
+    for (int rr = r - 1; rr >= 0; --rr) {
+        int s = make_square(f, rr);
+        set_bit(a, s);
+        if (test_bit(occupied, s)) break;
+    }
+    // petla w prawo
+    for (int ff = f + 1; ff <= 7; ++ff) {
+        int s = make_square(ff, r);
+        set_bit(a, s);
+        if (test_bit(occupied, s)) break;
+    }
+    // petla w lewo
+    for (int ff = f - 1; ff >= 0; --ff) {
+        int s = make_square(ff, r);
+        set_bit(a, s);
+        if (test_bit(occupied, s)) break;
+    }
+
+    return a;
+}

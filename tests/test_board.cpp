@@ -104,6 +104,23 @@ static void test_pawn_attacks() {
     CHECK(PAWN_ATTACKS[BLACK][H7] == square_bb(G6));
 }
 
+static void test_rook_attacks() {
+    
+    CHECK(popcount(rook_attacks(A1, 0)) == 14);
+    CHECK(popcount(rook_attacks(E4, 0)) == 14);
+    CHECK(popcount(rook_attacks(H8, 0)) == 14);
+
+    
+    Bitboard occ = square_bb(A3);
+    CHECK(popcount(rook_attacks(A1, occ)) == 9);
+    CHECK(test_bit(rook_attacks(A1, occ), A3));
+    CHECK(!test_bit(rook_attacks(A1, occ), A4));
+
+
+    occ = square_bb(E5) | square_bb(E3) | square_bb(D4) | square_bb(F4);
+    CHECK(rook_attacks(E4, occ) == occ);
+}
+
 
 int main() {
     test_bitboard_helpers();
@@ -114,6 +131,7 @@ int main() {
     test_pawn_attacks();
     test_king_attacks();
     test_knight_attacks();
+    test_rook_attacks();
 
     if (failures) {
         std::cerr << failures << " check(s) failed\n";
