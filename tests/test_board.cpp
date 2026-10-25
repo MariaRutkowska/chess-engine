@@ -228,6 +228,28 @@ static void test_movegen_pawns() {
 }
 
 
+static void test_movegen_promotions() {
+    init_attacks();
+    // biały pion na e7, e8 puste: 4 promocje
+    CHECK(count_moves("8/4P3/8/8/8/8/8/8 w - - 0 1") == 4);
+    // e8 puste, czarne wieże na d8 i f8: 4 ruchem + 4 biciem d8 + 4 biciem f8
+    CHECK(count_moves("3r1r2/4P3/8/8/8/8/8/8 w - - 0 1") == 12);
+    // e8 zablokowane, ale można bić na d8: 4
+    CHECK(count_moves("3rr3/4P3/8/8/8/8/8/8 w - - 0 1") == 4);
+    // czarny pion na e2: 4 promocje
+    CHECK(count_moves("8/8/8/8/8/8/4p3/8 b - - 0 1") == 4);
+
+    // pierwszy ruch na liście to promocja na hetmana
+    Board b;
+    b.set_fen("8/4P3/8/8/8/8/8/8 w - - 0 1");
+    MoveList list;
+    generate_moves(b, list);
+    CHECK(move_type(list.moves[0]) == PROMOTION);
+    CHECK(move_promo(list.moves[0]) == QUEEN);
+    CHECK(move_to_string(list.moves[0]) == "e7e8q");
+}
+
+
 int main() {
     test_bitboard_helpers();
     test_squares();
@@ -244,6 +266,7 @@ int main() {
     test_movegen_knight_king();
     test_movegen_sliders();
     test_movegen_pawns();
+    test_movegen_promotions();
 
     if (failures) {
         std::cerr << failures << " check(s) failed\n";

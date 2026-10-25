@@ -95,6 +95,19 @@ static void generate_queen_moves(const Board &board, MoveList &list)
     }
 }
 
+static void add_pawn_move(MoveList& list, int from, int to, int promo_rank) {
+    if (rank_of(to) == promo_rank) {
+        list.add(make_move(from, to, PROMOTION, QUEEN));
+        list.add(make_move(from, to, PROMOTION, ROOK));
+        list.add(make_move(from, to, PROMOTION, BISHOP));
+        list.add(make_move(from, to, PROMOTION, KNIGHT));
+    } else {
+        list.add(make_move(from, to));
+    }
+}
+
+
+
 static void generate_pawn_moves(const Board &board, MoveList &list)
 {
     Color us = board.side_to_move();
@@ -105,6 +118,7 @@ static void generate_pawn_moves(const Board &board, MoveList &list)
 
     int up = (us == WHITE) ? 8 : -8;
     int start_rank = (us == WHITE) ? 1 : 6;
+    int promo_rank = (us == WHITE) ? 7 : 0;
 
     while (pawns)
     {
@@ -113,7 +127,7 @@ static void generate_pawn_moves(const Board &board, MoveList &list)
         int to = from + up;
         if (!test_bit(occupied, to))
         {
-            list.add(make_move(from, to));
+            add_pawn_move(list, from, to, promo_rank);
 
             int to2 = to + up;
             if (rank_of(from) == start_rank && !test_bit(occupied, to2))
@@ -126,7 +140,7 @@ static void generate_pawn_moves(const Board &board, MoveList &list)
         while (targets)
         {
             int cap = pop_lsb(targets);
-            list.add(make_move(from, cap));
+            add_pawn_move(list, from, cap, promo_rank);
         }
     }
 }
