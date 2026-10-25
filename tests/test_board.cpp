@@ -192,7 +192,19 @@ static void test_movegen_knight_king() {
     CHECK(count_moves("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1") == 4);
 }
 
-
+static void test_movegen_sliders() {
+    init_attacks();
+    // sama wieża na e4
+    CHECK(count_moves("8/8/8/8/4R3/8/8/8 w - - 0 1") == 14);
+    // sam goniec na e4
+    CHECK(count_moves("8/8/8/8/4B3/8/8/8 w - - 0 1") == 13);
+    // sam hetman na e4
+    CHECK(count_moves("8/8/8/8/4Q3/8/8/8 w - - 0 1") == 27);
+    // wieża na a1, własny pion na a3, czarny pion na b1: a2 i bicie na b1
+    CHECK(count_moves("8/8/8/8/8/P7/8/Rp6 w - - 0 1") == 2);
+    // pozycja startowa: dalej tylko 4 ruchy skoczków
+    CHECK(count_moves(START_FEN) == 4);
+}
 
 int main() {
     test_bitboard_helpers();
@@ -208,6 +220,7 @@ int main() {
     test_queen_attacks();
     test_moves();
     test_movegen_knight_king();
+    test_movegen_sliders();
 
     if (failures) {
         std::cerr << failures << " check(s) failed\n";

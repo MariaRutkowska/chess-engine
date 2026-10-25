@@ -32,7 +32,59 @@ static void generate_king_moves(const Board& board, MoveList& list) {
     }
 }
 
+static void generate_rook_moves(const Board& board, MoveList& list) {
+    Color us = board.side_to_move();
+    Bitboard own = board.occupancy(us);
+    Bitboard occupied = board.occupancy();
+    Bitboard rooks = board.pieces(make_piece(us, ROOK));
+
+    while(rooks) {
+        int from = pop_lsb(rooks);
+        Bitboard targets = rook_attacks(from, occupied) & ~own;
+        while(targets) {
+            int to = pop_lsb(targets);
+            list.add(make_move(from, to));
+        }
+    }
+}
+
+static void generate_bishop_moves(const Board& board, MoveList& list) {
+    Color us = board.side_to_move();
+    Bitboard own = board.occupancy(us);
+    Bitboard occupied = board.occupancy();
+    Bitboard bishops = board.pieces(make_piece(us, BISHOP));
+
+    while(bishops) {
+        int from = pop_lsb(bishops);
+        Bitboard targets = bishop_attacks(from, occupied) & ~own;
+        while(targets) {
+            int to = pop_lsb(targets);
+            list.add(make_move(from, to));
+        }
+    }
+}
+
+static void generate_queen_moves(const Board& board, MoveList& list) {
+    Color us = board.side_to_move();
+    Bitboard own = board.occupancy(us);
+    Bitboard occupied = board.occupancy();
+    Bitboard queens = board.pieces(make_piece(us, QUEEN));
+
+    while(queens) {
+        int from = pop_lsb(queens);
+        Bitboard targets = queen_attacks(from, occupied) & ~own;
+        while(targets) {
+            int to = pop_lsb(targets);
+            list.add(make_move(from, to));
+        }
+    }
+}
+
+
 void generate_moves(const Board& board, MoveList& list) {
     generate_knight_moves(board, list);
     generate_king_moves(board, list);
+    generate_rook_moves(board, list);
+    generate_bishop_moves(board, list);
+    generate_queen_moves(board, list);
 }
