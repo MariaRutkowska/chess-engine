@@ -91,3 +91,40 @@ Bitboard rook_attacks(int sq, Bitboard occupied) {
 
     return a;
 }
+
+Bitboard bishop_attacks(int sq, Bitboard occupied) {
+    Bitboard a = 0;
+    int r = rank_of(sq);
+    int f = file_of(sq);
+
+    // w górę i w prawo
+    for (int rr = r + 1, ff = f + 1; rr <= 7 && ff <= 7; ++rr, ++ff) {
+        int s = make_square(ff, rr);
+        set_bit(a, s);
+        if (test_bit(occupied, s)) break;
+    }
+
+    // w górę i w lewo
+    for (int rr = r + 1, ff = f - 1; rr <= 7 && ff >= 0; ++rr, --ff) {
+        int s = make_square(ff, rr);
+        set_bit(a, s);
+        if (test_bit(occupied, s)) break;
+    }
+    //  w dół i w prawo
+    for (int rr = r - 1, ff = f + 1; rr >= 0 && ff <= 7; --rr, ++ff) {
+        int s = make_square(ff, rr);
+        set_bit(a, s);
+        if (test_bit(occupied, s)) break;
+    }
+    // w dół i w lewo
+    for (int rr = r - 1, ff = f - 1; rr >= 0 && ff >= 0; --rr, --ff) {
+        int s = make_square(ff, rr);
+        set_bit(a, s);
+        if (test_bit(occupied, s)) break;
+    }
+    return a;
+}
+// hetman jest kombinacja wiezy i gonca wiec piszemy go jako kombinacje
+Bitboard queen_attacks(int sq, Bitboard occupied) {
+    return rook_attacks(sq, occupied) | bishop_attacks(sq, occupied);
+}

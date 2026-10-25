@@ -121,6 +121,27 @@ static void test_rook_attacks() {
     CHECK(rook_attacks(E4, occ) == occ);
 }
 
+static void test_bishop_attacks() {
+    // pusta plansza
+    CHECK(popcount(bishop_attacks(A1, 0)) == 7);
+    CHECK(popcount(bishop_attacks(E4, 0)) == 13);
+    CHECK(popcount(bishop_attacks(H8, 0)) == 7);
+    CHECK(popcount(bishop_attacks(A4, 0)) == 7);
+
+    // goniec na e4 otoczony przeszkodami na d5, f5, d3, f3
+    Bitboard occ = square_bb(D5) | square_bb(F5) | square_bb(D3) | square_bb(F3);
+    CHECK(bishop_attacks(E4, occ) == occ);
+
+    // goniec na c1, przeszkoda na e3: d2, e3 oraz b2, a3
+    occ = square_bb(E3);
+    CHECK(bishop_attacks(C1, occ) ==
+          (square_bb(D2) | square_bb(E3) | square_bb(B2) | square_bb(A3)));
+}
+
+static void test_queen_attacks() {
+    CHECK(popcount(queen_attacks(E4, 0)) == 27);
+    CHECK(popcount(queen_attacks(A1, 0)) == 21);
+}
 
 int main() {
     test_bitboard_helpers();
@@ -132,6 +153,8 @@ int main() {
     test_king_attacks();
     test_knight_attacks();
     test_rook_attacks();
+    test_bishop_attacks();
+    test_queen_attacks();
 
     if (failures) {
         std::cerr << failures << " check(s) failed\n";
