@@ -3,7 +3,7 @@
 A UCI chess engine written from scratch in modern C++20, built around bitboards and
 developed with a focus on correctness testing and statistically sound strength measurement.
 
-> Work in progress. See the roadmap below for current status.
+> Work in progress. See the roadmap below for current status. Done as fun side project :)
 
 ## Features
 
